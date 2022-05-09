@@ -19,14 +19,14 @@ function updateNeighbours(grid, node) {
 
 const getUnivisitedNodeWithSmallestDistance = grid => {
     let flatGrid = grid.flat()
-    flatGrid = flatGrid.filter(node => !node.isStart && !node.isVisited && !node.isWall)
+    flatGrid = flatGrid.filter(node => !node.isStart && !node.isVisited && !node.isWall && node.distance !== Infinity)
     flatGrid.sort((a,b) => a.distance - b.distance)
     return flatGrid.length > 0 ? flatGrid[0] : null
 }
 
 const getPathToStartNode = node => {
     const shortestPath = []
-    if (node !== null) {
+    if (node) {
         while (!node.prevNode.isStart) {
             node = node.prevNode
             shortestPath.push(node)
@@ -50,8 +50,11 @@ function dijkstraAlgorithm(grid) {
     return [grid, visitedNodes, shortestPath]
 }
 
-async function dijkstra(grid) {
-    const [newGrid, visitedNodes, shortestPath] = dijkstraAlgorithm(grid)
+async function dijkstra(clearPath, grid, setAlgorithmRunnning) {
+    clearPath(grid)
+    setAlgorithmRunnning(true)
+    let visitedNodes, shortestPath
+    [grid, visitedNodes, shortestPath] = dijkstraAlgorithm(grid)
     for (const node of visitedNodes) {
         await sleep(1)
         document.getElementById(`${node.y}-${node.x}`).className += " bg-blue-500"
@@ -60,7 +63,8 @@ async function dijkstra(grid) {
         await sleep(10)
         document.getElementById(`${node.y}-${node.x}`).className += " bg-yellow-500"
     }
-    return newGrid
+    setAlgorithmRunnning(false)
+    return grid
 }
 
 export default dijkstra

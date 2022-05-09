@@ -37,30 +37,52 @@ function createGrid() {
 
 function App() {
   const [grid, setGrid] = useState(createGrid)
+  const [wallBuilding, setWallBuilding] = useState(false)
+  const [algorithmRunnning, setAlgorithmRunnning] = useState(false)
 
   function clearPath(grid) {
-    grid = grid.map(row => row.map(node => {
-      if (!node.isStart) {
-        node.distance = Infinity
-        node.isVisited = false
-        node.prevNode = null
-        if (!node.isWall && !node.isFinish) {
-          document.getElementById(`${node.y}-${node.x}`).className = "inline-block h-6 w-6 border border-indigo-600"
+    if (!algorithmRunnning) {
+      grid = grid.map(row => row.map(node => {
+        if (!node.isStart) {
+          node.distance = Infinity
+          node.isVisited = false
+          node.prevNode = null
+          if (!node.isWall && !node.isFinish) {
+            document.getElementById(`${node.y}-${node.x}`).className = "inline-block h-6 w-6 border border-indigo-600"
+          }
         }
-      }
-      return node
-    }))
-    return grid
+        return node
+      }))
+      setGrid(grid)
+    }
+  }
+
+  function clearWalls(grid) {
+    if (!algorithmRunnning) {
+      grid = grid.map(row => row.map(node => {
+        if (node.isWall) {
+          node.isWall = false
+        }
+        return node
+      }))
+      setGrid(grid)
+    }
+  }
+
+  function toggleWall(grid, node) {
+    if (!algorithmRunnning && wallBuilding && !node.isStart && !node.isFinish) {
+      grid[node.y][node.x].isWall = !node.isWall
+      setGrid(grid)
+    }
   }
 
   return (
     <>
-    <button onClick={async () => setGrid(await dijkstra(copyGrid(grid)))}>Run Djikstra</button>
-    <button onClick={() => setGrid(clearPath(copyGrid(grid)))}>
-      Clear Path
-    </button>
-    <div>
-      {grid.map(row => <div className="h-6">{row.map(node => <Cell node={node}/>)}</div>)}
+    <button onClick={async () => setGrid(await dijkstra(clearPath, copyGrid(grid), setAlgorithmRunnning))}>Run Djikstra</button>
+    <button onClick={() => clearPath(copyGrid(grid))}>Clear Path</button>
+    <button onClick={() => clearWalls(copyGrid(grid))}>Clear Walls</button>
+    <div onMouseDown={() => setWallBuilding(true)} onMouseUp={() => setWallBuilding(false)}>
+      {grid.map(row => <div className="h-6">{row.map(node => <Cell grid={grid} setGrid={setGrid} node={node} toggleWall={toggleWall}/>)}</div>)}
     </div>
     </>
   );
