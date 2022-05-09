@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Button from './components/Button'
 import Cell from './components/Cell'
 import dijkstra from './dijkstra'
 import { copyGrid } from './utils'
@@ -48,7 +49,7 @@ function App() {
           node.isVisited = false
           node.prevNode = null
           if (!node.isWall && !node.isFinish) {
-            document.getElementById(`${node.y}-${node.x}`).className = "inline-block h-6 w-6 border border-indigo-600"
+            document.getElementById(`${node.y}-${node.x}`).className = "inline-block h-6 w-6 border border-violet-600 bg-stone-800"
           }
         }
         return node
@@ -78,11 +79,17 @@ function App() {
 
   return (
     <>
-    <button onClick={async () => setGrid(await dijkstra(clearPath, copyGrid(grid), setAlgorithmRunnning))}>Run Djikstra</button>
-    <button onClick={() => clearPath(copyGrid(grid))}>Clear Path</button>
-    <button onClick={() => clearWalls(copyGrid(grid))}>Clear Walls</button>
-    <div onMouseDown={() => setWallBuilding(true)} onMouseUp={() => setWallBuilding(false)}>
-      {grid.map(row => <div className="h-6">{row.map(node => <Cell grid={grid} setGrid={setGrid} node={node} toggleWall={toggleWall}/>)}</div>)}
+    <div className="h-screen bg-stone-900 overflow-hidden">
+      <div className="flex justify-center items-center">
+        <Button onClick={async () => setGrid(await dijkstra(clearPath, copyGrid(grid), setAlgorithmRunnning))}>Run Djikstra</Button>
+        <Button onClick={() => clearPath(copyGrid(grid))}>Clear Path</Button>
+        <Button onClick={() => clearWalls(copyGrid(grid))}>Clear Walls</Button>
+      </div>
+      <div className="flex h-full justify-center items-center">
+        <div onMouseDown={() => setWallBuilding(true)} onMouseUp={() => setWallBuilding(false)}>
+          {grid.map(row => <div className="h-6">{row.map(node => <Cell grid={grid} setGrid={setGrid} node={node} toggleWall={toggleWall}/>)}</div>)}
+        </div>
+      </div>
     </div>
     </>
   );

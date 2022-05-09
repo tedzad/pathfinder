@@ -57,11 +57,11 @@ async function dijkstra(clearPath, grid, setAlgorithmRunnning) {
     [grid, visitedNodes, shortestPath] = dijkstraAlgorithm(grid)
     for (const node of visitedNodes) {
         await sleep(1)
-        document.getElementById(`${node.y}-${node.x}`).className += " bg-blue-500"
+        document.getElementById(`${node.y}-${node.x}`).className = "inline-block h-6 w-6 border border-violet-600 bg-cyan-500"
     }
     for (const node of shortestPath) {
         await sleep(10)
-        document.getElementById(`${node.y}-${node.x}`).className += " bg-yellow-500"
+        document.getElementById(`${node.y}-${node.x}`).className = "inline-block h-6 w-6 border border-violet-600 bg-orange-500"
     }
     setAlgorithmRunnning(false)
     return grid
